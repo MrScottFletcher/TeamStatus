@@ -4,8 +4,10 @@
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Flurl.Http" Version="2.4.2" />
     <PackageReference Include="Formo.Cloud" Version="1.2.1.38064" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
+    <PackageReference Include="Microsoft.Azure.Devices" Version="1.20.0" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.5" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
