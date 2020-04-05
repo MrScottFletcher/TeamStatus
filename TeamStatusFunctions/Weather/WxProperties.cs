@@ -26,13 +26,13 @@ namespace TeamStatusFunctions
         /// 0 = none, 1 = advisory, 2 = Watch, 3=Warning
         /// Provided separately from weather.gov or other alert system
         /// </summary>
-        public int WxAlertLevel { get; set; } = 0;
+        public int WxAlert { get; set; } = 0;
 
         /// <summary>
         /// Simplified - if WeatherCondition meets a corresponding severe version of a value
         /// https://openweathermap.org/weather-conditions
         /// </summary>
-        public bool WxAlertSevere { get; set; }
+        public bool WxSevere { get; set; }
 
         /// <summary>
         /// 0 = Clear, 1 = Few, 2 = Scattered, 3 = Broken, 4=Overcast
@@ -51,18 +51,18 @@ namespace TeamStatusFunctions
         /// Simplified - if WeatherCondition = 2xx
         /// https://openweathermap.org/weather-conditions
         /// </summary>
-        public bool IsLightning { get; set; }
+        public bool wxThndr { get; set; }
 
         /// <summary>
         /// Simplified - if WeatherCondition meets a corresponding severe version of a value
         /// https://openweathermap.org/weather-conditions
         /// </summary>
-        public int WxIntensity { get; set; }
+        public int WxWow { get; set; }
 
         /// <summary>
         /// Simplified - if WeatherCondition is 781 from openweather OR a Tornado WARNING is present
         /// https://openweathermap.org/weather-conditions
         /// </summary>
-        public bool IsTornadoWarning { get; set; } = false;
+        public bool WxTrndo { get; set; } = false;
     }
 }

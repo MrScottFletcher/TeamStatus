@@ -85,15 +85,15 @@ namespace TeamStatusFunctions
                 case 230: // thunderstorm with light drizzle
                     d.Wx = 2;
                     d.Sky = 4; //Overcast
-                    d.IsLightning = true;
-                    d.WxIntensity = 3;
+                    d.wxThndr = true;
+                    d.WxWow = 3;
                     break;
 
                 case 201: // thunderstorm with rain
                     d.Wx = 2;
                     d.Sky = 4; //Overcast
-                    d.IsLightning = true;
-                    d.WxIntensity = 5;
+                    d.wxThndr = true;
+                    d.WxWow = 5;
                     break;
 
                 case 202: // thunderstorm with heavy rain
@@ -101,8 +101,8 @@ namespace TeamStatusFunctions
                 case 232: // thunderstorm with heavy drizzle
                     d.Wx = 2;
                     d.Sky = 4; //Overcast
-                    d.IsLightning = true;
-                    d.WxIntensity = 7;
+                    d.wxThndr = true;
+                    d.WxWow = 7;
                     break;
                 //===============================================
                 // Group 3xx: Drizzle
@@ -111,7 +111,7 @@ namespace TeamStatusFunctions
                 case 310: // light intensity drizzle rain
                     d.Wx = 3;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 2;
+                    d.WxWow = 2;
                     break;
                 case 301: // drizzle
                 case 311: // drizzle rain
@@ -119,14 +119,14 @@ namespace TeamStatusFunctions
                 case 321: // shower drizzle
                     d.Wx = 3;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 5;
+                    d.WxWow = 5;
                     break;
                 case 302: // heavy intensity drizzle
                 case 312: // heavy intensity drizzle rain
                 case 314: // heavy shower rain and drizzle
                     d.Wx = 3;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 7;
+                    d.WxWow = 7;
                     break;
                 //===============================================
                 // Group 5xx: Rain
@@ -135,19 +135,19 @@ namespace TeamStatusFunctions
                 case 520: // light intensity shower rain
                     d.Wx = 5;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 2;
+                    d.WxWow = 2;
                     break;
                 case 501: // moderate rain
                 case 511: // freezing rain
                     d.Wx = 5;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 5;
+                    d.WxWow = 5;
                     break;
                 case 521: // shower rain
                 case 531: // ragged shower rain
                     d.Wx = 5;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 7;
+                    d.WxWow = 7;
                     break;
                 case 522: // heavy intensity shower rain
                 case 502: // heavy intensity rain
@@ -155,7 +155,7 @@ namespace TeamStatusFunctions
                 case 504: // extreme rain
                     d.Wx = 5;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 9;
+                    d.WxWow = 9;
                     break;
                 //===============================================
                 // Group 6xx: Snow
@@ -164,7 +164,7 @@ namespace TeamStatusFunctions
                 case 612: // Light shower sleet
                     d.Wx = 6;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 1;
+                    d.WxWow = 1;
                     break;
                 case 601: // Snow
                 case 613: // Shower sleet
@@ -173,19 +173,19 @@ namespace TeamStatusFunctions
                 case 620: // Light shower snow
                     d.Wx = 6;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 3;
+                    d.WxWow = 3;
                     break;
                 case 611: // Sleet
                     d.Wx = 6;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 6;
+                    d.WxWow = 6;
                     break;
                 case 602: // Heavy snow
                 case 621: // Shower snow
                 case 622: // Heavy shower snow
                     d.Wx = 6;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 7;
+                    d.WxWow = 7;
                     break;
 
                 //===============================================
@@ -202,7 +202,7 @@ namespace TeamStatusFunctions
                 case 771: // squalls
                     d.Wx = 7;
                     d.Sky = 3; //Broken
-                    d.WxIntensity = 7;
+                    d.WxWow = 7;
                     break;
 
                 //#####################################################
@@ -210,9 +210,9 @@ namespace TeamStatusFunctions
                 //#####################################################
                 case 781:
                     d.Wx = 9;
-                    d.IsTornadoWarning = true;
+                    d.WxTrndo = true;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 10;
+                    d.WxWow = 10;
                     break;
 
                 //===============================================
@@ -221,7 +221,7 @@ namespace TeamStatusFunctions
                 case 800: // clear sky
                     d.Wx = 0;
                     d.Sky = 0; //Clear
-                    d.WxIntensity = 0;
+                    d.WxWow = 0;
                     break;
 
                 //===============================================
@@ -230,22 +230,22 @@ namespace TeamStatusFunctions
                 case 801: // few clouds: 11 - 25 %
                     d.Wx = 0;
                     d.Sky = 1; //Few
-                    d.WxIntensity = 0;
+                    d.WxWow = 0;
                     break;
                 case 802: // scattered clouds: 25 - 50 %
                     d.Wx = 0;
                     d.Sky = 2; //Scattered
-                    d.WxIntensity = 0;
+                    d.WxWow = 0;
                     break;
                 case 803: // broken clouds: 51 - 84 %
                     d.Wx = 0;
                     d.Sky = 3; //Broken
-                    d.WxIntensity = 0;
+                    d.WxWow = 0;
                     break;
                 case 804: // overcast clouds: 85 - 100 %
                     d.Wx = 0;
                     d.Sky = 4; //Overcast
-                    d.WxIntensity = 0;
+                    d.WxWow = 0;
                     break;
                 default:
                     //what to do here?
@@ -276,10 +276,10 @@ namespace TeamStatusFunctions
             //===========================
             //Wind makes everything more intense, right?  +1 per 10mph
             int windFactor = Convert.ToInt32(r.WindSpeed / 10);
-            d.WxIntensity += windFactor;
+            d.WxWow += windFactor;
 
-            if (d.WxIntensity > 10)
-                d.WxIntensity = 10;
+            if (d.WxWow > 10)
+                d.WxWow = 10;
             //===========================
             return d;
         }
@@ -390,9 +390,9 @@ namespace TeamStatusFunctions
                 }
             }
 
-            d.WxAlertLevel = alertLevel;
-            d.IsTornadoWarning = isTornadoWarning;
-            d.WxAlertSevere = isSevere;
+            d.WxAlert = alertLevel;
+            d.WxTrndo = isTornadoWarning;
+            d.WxSevere = isSevere;
 
             return d;
         }
