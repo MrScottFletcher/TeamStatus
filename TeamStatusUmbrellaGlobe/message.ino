@@ -40,13 +40,25 @@ void parseTwinMessage(char* message)
         return;
     }
 
+    //On start, the server will send all properties
+    //{"desired":{"ZipCode":"61614","tempF":61.2,"dayPart":0,"wxAlert":0,"wxSevere":false,"sky":4,"wx":0,"wxThndr":false...
+    //but on subsequent updates, it will only send the patched values, and will place them at the root
+    //{"tempF":61.2,"dayPart":0,"wxAlert":0,"wxSevere":false,"sky":4,"wx":0,"wxThndr":false...
+
+    //Consider checking for 'desired', and passing that nested JsonObject at to the parser method
+    
     Serial.println("================");
     Serial.println("Parsing tempF:");
 
     tempF = root["desired"]["tempF"];
+    if(tempF == 0)
+    {
+        tempF = root["tempF"];
+    }
 
     Serial.println("SUCCESS!  Yay");
     Serial.println(tempF);
     Serial.println("Printed TempF");
     Serial.println("================");
+
 }
