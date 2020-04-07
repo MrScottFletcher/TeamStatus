@@ -46,19 +46,39 @@ void parseTwinMessage(char* message)
     //{"tempF":61.2,"dayPart":0,"wxAlert":0,"wxSevere":false,"sky":4,"wx":0,"wxThndr":false...
 
     //Consider checking for 'desired', and passing that nested JsonObject at to the parser method
-    
-    Serial.println("================");
-    Serial.println("Parsing tempF:");
+//    Serial.println("================");
+//    Serial.println("Parsing tempF:");
+//
+//    tempF = root["desired"]["tempF"];
+//    if(tempF == 0)
+//    {
+//        tempF = root["tempF"];
+//    }
+//
+//    Serial.println("SUCCESS!  Yay");
+//    Serial.println(tempF);
+//    Serial.println("Printed TempF");
+//    Serial.println("================");
 
-    tempF = root["desired"]["tempF"];
-    if(tempF == 0)
+    if (root["desired"]["tempF"].success())
     {
-        tempF = root["tempF"];
+        Serial.println("================");
+        Serial.println("Parsing tempF from Desired:");
+        tempF = root["desired"]["tempF"];
+        Serial.println(tempF);
+        Serial.println("================");
     }
-
-    Serial.println("SUCCESS!  Yay");
-    Serial.println(tempF);
-    Serial.println("Printed TempF");
-    Serial.println("================");
-
+    else if (root.containsKey("tempF"))
+    {
+        Serial.println("================");
+        Serial.println("Parsing tempF from ROOT:");
+        tempF = root["tempF"];
+        Serial.println(tempF);
+        Serial.println("================");
+    }
+    else{
+        Serial.println("================");
+        Serial.println("Could not find tempF.  Sad.");
+        Serial.println("================");
+    }
 }
