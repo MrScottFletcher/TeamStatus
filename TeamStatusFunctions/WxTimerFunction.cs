@@ -56,7 +56,7 @@ namespace TeamStatusFunctions
                 stage = $"TotalDeviceCount = {deviceCount.ToString()}";
                 if (deviceCount > 0)
                 {
-                    string queryByZip = "select * from devices ORDER BY properties.reported.ZipCode";
+                    string queryByZip = "select * from devices GROUP BY properties.desired.ZipCode";
 
                     stage = $"CreateQuery by Zip...'{queryByZip}'";
                     IQuery deviceQuery = rm.CreateQuery(queryByZip);
@@ -68,8 +68,12 @@ namespace TeamStatusFunctions
 
                     while (deviceQuery.HasMoreResults)
                     {
+                        log.LogInformation($"Passed first test of deviceQuery.HasMoreResults with {queryByZip} {DateTime.Now}");
                         #region Get the next page of devices
                         stage = $"GetNextAsTwinAsync... ";
+
+                        //Use this for grouping, or are we stuck parsing Json?
+                        List<IEnumerable<Twin>> groupedPages = null;
                         IEnumerable<Twin> page = null;
                         try
                         {
@@ -87,12 +91,13 @@ namespace TeamStatusFunctions
                         stage = $"foreach (var twin in page)... ";
                         foreach (var twin in page)
                         {
+                            log.LogInformation($"Looking at Twin '{twin.DeviceId}' in page {DateTime.Now}");
                             //get the zip code of the current twin
                             string twinZipCode = String.Empty;
 
-                            stage = $"if (twin.Properties.Reported.Contains(ZipCode)... ";
-                            if (twin.Properties.Reported.Contains("ZipCode"))
-                                twinZipCode = twin.Properties.Reported["ZipCode"];
+                            stage = $"if (twin.Properties.Desired.Contains(ZipCode)... ";
+                            if (twin.Properties.Desired.Contains("ZipCode"))
+                                twinZipCode = twin.Properties.Desired["ZipCode"];
 
                             if (!String.IsNullOrEmpty(twinZipCode))
                             {
@@ -119,6 +124,7 @@ namespace TeamStatusFunctions
                                 {
                                     // do work on twin object
                                     stage = $"UpdateTwinAsync for twin deviceId: {twin.DeviceId} ";
+                                    log.LogInformation($"UPDATING weather for '{twin.DeviceId}'. YAY!");
                                     Twin updatedTwin = rm.UpdateTwinAsync(twin.DeviceId, weatherPatch, twin.ETag).Result;
                                 }
                             }
@@ -126,6 +132,7 @@ namespace TeamStatusFunctions
                             {
                                 //No ZipCode - not going to update the weather on this twin.  
                                 //Log it? Do we care enough?
+                                log.LogInformation($"NOTE: The Twin '{twin.DeviceId}' did not have a Properties.Reported['ZipCode'].");
                             }
                         }
                     }

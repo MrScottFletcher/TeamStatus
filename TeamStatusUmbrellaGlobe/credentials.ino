@@ -36,7 +36,8 @@ void readCredentials()
 bool needEraseEEPROM()
 {
     char result = 'n';
-    readFromSerial("Do you need re-input your credential information?(Auto skip this after 5 seconds)[Y/n]", &result, 1, 5000);
+    serialFlush();
+    readFromSerial("Do you need re-input your credential information?(Auto skip this after 10 seconds)[Y/n]", &result, 1, 10000);
     if (result == 'Y' || result == 'y')
     {
         clearParam();
@@ -44,6 +45,12 @@ bool needEraseEEPROM()
     }
     return false;
 }
+
+void serialFlush(){
+  while(Serial.available() > 0) {
+    char t = Serial.read();
+  }
+}   
 
 // reset the EEPROM
 void clearParam()

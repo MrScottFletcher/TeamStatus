@@ -51,4 +51,3 @@ bool readFromSerial(char* prompt, char* buf, int maxLen, int timeout)
         delay(delayTime);
     }
 }
-

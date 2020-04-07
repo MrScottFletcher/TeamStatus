@@ -8,6 +8,7 @@
 
 
 #include <Adafruit_NeoPixel.h>
+
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 #include <WiFiUdp.h>
@@ -26,6 +27,7 @@ static char* ssid;
 static char* pass;
 //static Adafruit_NeoPixel strip;
 
+static double tempF = 0;
 static int interval = INTERVAL;
 static int fadeSpeed = FADE_SPEED;
 static int fadePause = FADE_PAUSE;
@@ -84,7 +86,7 @@ void initTime()
 {
     time_t epochTime;
     configTime(0, 0, "pool.ntp.org", "time.nist.gov");
-
+    delay(1000);
     while (true)
     {
         epochTime = time(NULL);
@@ -113,6 +115,7 @@ void setup()
     delay(2000);
     readCredentials();
 
+    delay(2000);
     initWifi();
     initTime();
     //initSensor();
@@ -134,6 +137,9 @@ void setup()
     IoTHubClient_LL_SetMessageCallback(iotHubClientHandle, receiveMessageCallback, NULL);
     IoTHubClient_LL_SetDeviceMethodCallback(iotHubClientHandle, deviceMethodCallback, NULL);
     IoTHubClient_LL_SetDeviceTwinCallback(iotHubClientHandle, twinCallback, NULL);
+
+    char messagePayload[MESSAGE_MAX_LEN];
+    sendMessage(iotHubClientHandle, messagePayload);
 }
 
 
