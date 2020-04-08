@@ -194,13 +194,17 @@ namespace TeamStatusFunctions
                 case 701: // mist
                 case 711: // Smoke
                 case 721: // Haze
-                case 731: // sand / dust whirls
                 case 741: // fog
-                case 751: // sand
                 case 761: // dust
+                    d.Wx = 7;
+                    d.Sky = 3; //Broken
+                    d.WxWow = 1;
+                    break;
+                case 751: // sand
+                case 731: // sand / dust whirls
                 case 762: // volcanic ash
                 case 771: // squalls
-                    d.Wx = 7;
+                    d.Wx = 8;
                     d.Sky = 3; //Broken
                     d.WxWow = 7;
                     break;
