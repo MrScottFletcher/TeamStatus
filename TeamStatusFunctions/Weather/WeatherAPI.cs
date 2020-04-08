@@ -345,7 +345,7 @@ namespace TeamStatusFunctions
             try { r.WindSpeed = wxJson.wind.speed; }
             catch (Exception exAssign) { throw new InvalidCastException("Error assigning WindSpeed. " + exAssign.ToString()); }
             try { r.WindDirection = wxJson.wind.deg; }
-            catch (Exception exAssign) { throw new InvalidCastException("Error assigning WindDirection. " + exAssign.ToString()); }
+            catch { r.WindDirection = 0; } //Might not exist if no wind.  Don't bother throwing if this one thing errors. :) 
             try { r.Latitude = wxJson.coord.lat; }
             catch (Exception exAssign) { throw new InvalidCastException("Error assigning Latitude. " + exAssign.ToString()); }
             try { r.Longitude = wxJson.coord.lon; }
