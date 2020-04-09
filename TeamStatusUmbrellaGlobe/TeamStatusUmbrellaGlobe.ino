@@ -12,12 +12,13 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 #include <WiFiUdp.h>
-
 #include <AzureIoTHub.h>
 #include <AzureIoTProtocol_MQTT.h>
 #include <AzureIoTUtility.h>
 
 #include "config.h"
+#include "audioplayer.h"
+#include "weather.h"
 
 static bool messagePending = false;
 static bool messageSending = true;
@@ -27,7 +28,6 @@ static char* ssid;
 static char* pass;
 //static Adafruit_NeoPixel strip;
 
-static double tempF = 0;
 static int interval = INTERVAL;
 static int fadeSpeed = FADE_SPEED;
 static int fadePause = FADE_PAUSE;
@@ -37,12 +37,87 @@ static int blue = BLUE;
 static bool lights = LIGHTS;
 static bool flash = FLASH;
 
-// Define Function Prototypes that use User Types below here or use a .h file
-//
+static IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle;
+
+void setup()
+{
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LOW);
+    
+    setupAudio(SFX_2_STARTUP_2);
+    delay(1000);
+
+    initNeoPixels();
+    
+    initSerial();
+    
+    readCredentials();
+    delay(2000);
+    
+    initWifi();
+    
+    initTime();
+    //initSensor();
+
+    iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(connectionString, MQTT_Protocol);
+    if (iotHubClientHandle == NULL)
+    {
+        Serial.println("Failed on IoTHubClient_CreateFromConnectionString.");
+        play_IoT_HubConnectionFailure();
+        while (1);
+    }
+
+    IoTHubClient_LL_SetOption(iotHubClientHandle, "product_info", "HappyPath_AdafruitFeatherHuzzah-C");
+    IoTHubClient_LL_SetMessageCallback(iotHubClientHandle, receiveMessageCallback, NULL);
+    IoTHubClient_LL_SetDeviceMethodCallback(iotHubClientHandle, deviceMethodCallback, NULL);
+    IoTHubClient_LL_SetDeviceTwinCallback(iotHubClientHandle, twinCallback, NULL);
+
+    char messagePayload[MESSAGE_MAX_LEN];
+    sendMessage(iotHubClientHandle, messagePayload);
+}
+
+static int messageCount = 1;
+void loop()
+{
+    if (!messagePending && messageSending)
+    {
+        char messagePayload[MESSAGE_MAX_LEN];
+        //to send a message.  This was the sample code for reading a temperature...
+        //bool temperatureAlert = readMessage(messageCount, messagePayload);
+        //sendMessage(iotHubClientHandle, messagePayload, temperatureAlert);
+        messageCount++;
+        delay(interval);
+    }
+
+//    if (lights)
+//    {
+//        Serial.println("Lights: True");
+//        if (flash)
+//        {
+//            Serial.println("Lights: True and Flash");
+//            fadeIn(red, green, blue, fadeSpeed);
+//            delay(fadePause);
+//            fadeOut(red, green, blue, fadeSpeed);
+//        }
+//        else
+//        {
+//            Serial.println("Lights: True no flash");
+//            setLights(red, green, blue);
+//        }
+//    }
+//    else
+//    {
+//        setLights(0, 0, 0);
+//        Serial.println("Lights: False");
+//    }
+
+    IoTHubClient_LL_DoWork(iotHubClientHandle);
+    delay(interval);
+}
 
 
-// Define Functions below here or use other .ino or cpp files
-//
+
+
 
 
 void blinkLED()
@@ -104,44 +179,6 @@ void initTime()
     }
 }
 
-static IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle;
-void setup()
-{
-    pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, LOW);
-
-    initNeoPixels();
-    initSerial();
-    delay(2000);
-    readCredentials();
-
-    delay(2000);
-    initWifi();
-    initTime();
-    //initSensor();
-
-    /*
-     * AzureIotHub library remove AzureIoTHubClient class in 1.0.34, so we remove the code below to avoid
-     *    compile error
-    */
-
-    // initIoThubClient();
-    iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(connectionString, MQTT_Protocol);
-    if (iotHubClientHandle == NULL)
-    {
-        Serial.println("Failed on IoTHubClient_CreateFromConnectionString.");
-        while (1);
-    }
-
-    IoTHubClient_LL_SetOption(iotHubClientHandle, "product_info", "HappyPath_AdafruitFeatherHuzzah-C");
-    IoTHubClient_LL_SetMessageCallback(iotHubClientHandle, receiveMessageCallback, NULL);
-    IoTHubClient_LL_SetDeviceMethodCallback(iotHubClientHandle, deviceMethodCallback, NULL);
-    IoTHubClient_LL_SetDeviceTwinCallback(iotHubClientHandle, twinCallback, NULL);
-
-    char messagePayload[MESSAGE_MAX_LEN];
-    sendMessage(iotHubClientHandle, messagePayload);
-}
-
 
 void fadeIn(uint8_t red, uint8_t green, uint8_t blue, uint8_t wait) {
 
@@ -172,44 +209,4 @@ void setLights(uint8_t red, uint8_t green, uint8_t blue)
     //    strip.setPixelColor(i, red, green, blue);
     //}
     //strip.show();
-}
-
-
-static int messageCount = 1;
-void loop()
-{
-    if (!messagePending && messageSending)
-    {
-        char messagePayload[MESSAGE_MAX_LEN];
-        //to send a message.  This was the sample code for reading a temperature...
-        //bool temperatureAlert = readMessage(messageCount, messagePayload);
-        //sendMessage(iotHubClientHandle, messagePayload, temperatureAlert);
-        messageCount++;
-        delay(interval);
-    }
-
-    if (lights)
-    {
-        Serial.println("Lights: True");
-        if (flash)
-        {
-            Serial.println("Lights: True and Flash");
-            fadeIn(red, green, blue, fadeSpeed);
-            delay(fadePause);
-            fadeOut(red, green, blue, fadeSpeed);
-        }
-        else
-        {
-            Serial.println("Lights: True no flash");
-            setLights(red, green, blue);
-        }
-    }
-    else
-    {
-        setLights(0, 0, 0);
-        Serial.println("Lights: False");
-    }
-
-    IoTHubClient_LL_DoWork(iotHubClientHandle);
-    delay(interval);
 }

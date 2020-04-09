@@ -1,3 +1,6 @@
+
+static double tempF = 0;
+
 //
 //enum DisplayModeEnum {
 //    Weather_Rain,
