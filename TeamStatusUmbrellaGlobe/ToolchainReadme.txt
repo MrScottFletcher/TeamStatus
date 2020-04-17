@@ -100,3 +100,15 @@ using namespace axTLS;
 
 static WiFiClientSecure sslClient; // for ESP8266
 #elif ARDUINO_ARCH_ESP32
+
+
+====================================
+Add RotaryEncoder for the dial
+
+Or try to use the Encoder Library, but the Arduiono core is old
+I manually updated direct_pin_read.h and interrupt_pins.h from the head of this repo (utility folder) and now it compiles happily.
+C:\Users\scott\Documents\Arduino\libraries\Encoder\utility
+https://github.com/PaulStoffregen/Encoder/blob/master/utility/direct_pin_read.h
+https://github.com/PaulStoffregen/Encoder/blob/master/utility/interrupt_pins.h
+
+

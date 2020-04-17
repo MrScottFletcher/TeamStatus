@@ -5,11 +5,11 @@
 #define DHT_TYPE DHT22
 
 // Pin layout configuration
-#define LED_PIN 0
+#define LED_PIN 16
 #define DHT_PIN 2
 
-#define NEO_PIN 15
-#define NEO_COUNT 24
+#define NEO_PIN 2
+#define NEO_COUNT 8
 
 #define FADE_SPEED 10
 #define FADE_PAUSE 10

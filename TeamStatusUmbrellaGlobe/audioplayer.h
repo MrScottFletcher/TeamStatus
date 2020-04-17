@@ -28,8 +28,8 @@
 #define SFX_501_WIFI_CONNNECTION_LOST  501
 #define SFX_600_UNABLE_TO_REGISTER_IOT_SERVER  600
 
-#define DFPLAYER_RX_PIN D5
-#define DFPLAYER_TX_PIN D6
+#define DFPLAYER_RX_PIN 26 // D5 //14
+#define DFPLAYER_TX_PIN 27 //Cannot use 12 on ESP32 or it will boot over and over!!!// D6 //12
 
 #include "SoftwareSerial.h"
 #include "DFRobotDFPlayerMini.h"
@@ -44,15 +44,22 @@ void setupAudio(int playConfirmSound)
   mySoftwareSerial.begin(9600);
   Serial.println();
   Serial.println(F("DFRobot DFPlayer Mini Demo (ESP SoftwareSerial)"));
-  Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
+  Serial.println(F("Initializing DFPlayer ... (May take 3~10 seconds)"));
 
- 
-  if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
-    Serial.println(F("Unable to begin:"));
-    Serial.println(F("1.Please recheck the connection!"));
-    Serial.println(F("2.Please insert the SD card!"));
-    while(true);
+
+  //Use softwareSerial to communicate with mp3.
+  if (!myDFPlayer.begin(mySoftwareSerial)) 
+  { 
+    delay(10000);
+    if (!myDFPlayer.begin(mySoftwareSerial)) 
+    {  //Use softwareSerial to communicate with mp3.
+      Serial.println(F("Unable to begin (after 10 sec retry):"));
+      Serial.println(F("1.Please recheck the connection!"));
+      Serial.println(F("2.Please insert the SD card!"));
+      while(true);
+    }
   }
+  
   Serial.println(F("DFPlayer Mini online."));
   
   myDFPlayer.setTimeOut(500); //Set serial communictaion time out 500ms

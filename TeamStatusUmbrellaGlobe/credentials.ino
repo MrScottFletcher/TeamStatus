@@ -37,7 +37,7 @@ bool needEraseEEPROM()
 {
     char result = 'n';
     serialFlush();
-    readFromSerial("Do you need re-input your credential information?(Auto skip this after 10 seconds)[Y/n]", &result, 1, 10000);
+    readFromSerial("Do you need re-input your credential information?(Auto skip this after 5 seconds)[Y/n]", &result, 1, 5000);
     if (result == 'Y' || result == 'y')
     {
         clearParam();

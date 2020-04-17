@@ -24,7 +24,7 @@ namespace TeamStatusFunctions
             long deviceCount = 0;
             try
             {
-                log.LogInformation($"C# Timer trigger function executed at {DateTime.Now}");
+                //log.LogInformation($"C# Timer trigger function executed at {DateTime.Now}");
 
                 var serializerSettings = new JsonSerializerSettings();
                 serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -68,7 +68,7 @@ namespace TeamStatusFunctions
 
                     while (deviceQuery.HasMoreResults)
                     {
-                        log.LogInformation($"Passed first test of deviceQuery.HasMoreResults with {queryByZip} {DateTime.Now}");
+                        //log.LogInformation($"Passed first test of deviceQuery.HasMoreResults with {queryByZip} {DateTime.Now}");
                         #region Get the next page of devices
                         stage = $"GetNextAsTwinAsync... ";
 
@@ -91,7 +91,7 @@ namespace TeamStatusFunctions
                         stage = $"foreach (var twin in page)... ";
                         foreach (var twin in page)
                         {
-                            log.LogInformation($"Looking at Twin '{twin.DeviceId}' in page {DateTime.Now}");
+                            //log.LogInformation($"Looking at Twin '{twin.DeviceId}' in page {DateTime.Now}");
                             //get the zip code of the current twin
                             string twinZipCode = String.Empty;
 
@@ -124,7 +124,7 @@ namespace TeamStatusFunctions
                                 {
                                     // do work on twin object
                                     stage = $"UpdateTwinAsync for twin deviceId: {twin.DeviceId} ";
-                                    log.LogInformation($"UPDATING weather for '{twin.DeviceId}'. YAY!");
+                                    //log.LogInformation($"UPDATING weather for '{twin.DeviceId}'. YAY!");
                                     Twin updatedTwin = rm.UpdateTwinAsync(twin.DeviceId, weatherPatch, twin.ETag).Result;
                                 }
                             }
@@ -132,14 +132,14 @@ namespace TeamStatusFunctions
                             {
                                 //No ZipCode - not going to update the weather on this twin.  
                                 //Log it? Do we care enough?
-                                log.LogInformation($"NOTE: The Twin '{twin.DeviceId}' did not have a Properties.Reported['ZipCode'].");
+                                //log.LogInformation($"NOTE: The Twin '{twin.DeviceId}' did not have a Properties.Reported['ZipCode'].");
                             }
                         }
                     }
                 }
                 else
                 {
-                    log.LogInformation($"No devices in the list.  Nothing to do. {DateTime.Now}");
+                    //log.LogInformation($"No devices in the list.  Nothing to do. {DateTime.Now}");
                 }
 
                 //FYI - There is no response for timers
