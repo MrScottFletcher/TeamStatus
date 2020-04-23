@@ -111,4 +111,12 @@ C:\Users\scott\Documents\Arduino\libraries\Encoder\utility
 https://github.com/PaulStoffregen/Encoder/blob/master/utility/direct_pin_read.h
 https://github.com/PaulStoffregen/Encoder/blob/master/utility/interrupt_pins.h
 
+========================================
+
+For the OLED display
+Adafruit_GFX --- and all of the other requirements that it wants
+Adafruit_SSD1306.h
+--------------------------------------
+edit the iothubtransport_mqtt_common.c file to comment out this nagging line.
+LogError("Failure result from IoTHubMessage_GetData");
 

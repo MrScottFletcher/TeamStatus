@@ -1,13 +1,14 @@
-#define SFX_1_STARTUP 1
-#define SFX_2_STARTUP_2 2
-#define SFX_3_CARTOON_COMPUTER  3
-#define SFX_10_DOORBELL  10
-#define SFX_11_MORSE_CODE  11
-#define SFX_12_MODEM_SOUNDS  12
-#define SFX_13_FRONT_DESK_BELL  13
-#define SFX_14_DIXIE_HORN  14
-#define SFX_15_SUBMARINE_DIVING  15
-#define SFX_16_GLASS_PING  16
+#define SFX_1_STARTUP 001
+#define SFX_2_STARTUP_2 002
+#define SFX_3_CARTOON_COMPUTER  003
+#define SFX_4_COMPANY_LOGO_SOUND  004
+#define SFX_10_DOORBELL  010
+#define SFX_11_MORSE_CODE  011
+#define SFX_12_MODEM_SOUNDS  012
+#define SFX_13_FRONT_DESK_BELL  013
+#define SFX_14_DIXIE_HORN  014
+#define SFX_15_SUBMARINE_DIVING  015
+#define SFX_16_GLASS_PING  016
 #define SFX_100_THUNDER  100
 #define SFX_101_THUNDER_STRIKE_2  101
 #define SFX_102_THUNDER_STRIKE_1  102
@@ -74,81 +75,89 @@ void setupAudio(int playConfirmSound)
 
   if(playConfirmSound > 0)
   {
-    myDFPlayer.play(playConfirmSound);
+    myDFPlayer.playFolder(1, playConfirmSound);  
+    //myDFPlayer.play(playConfirmSound);
   }
 }
 
 //###################################################################################
+//play specific mp3 in SD:/15/004.mp3; Folder Name(1~99); File Name(1~255)
+//example: myDFPlayer.playFolder(1, 3);
+
+//Otherwise, here are the problems with using the other methods:
+//- 1. putting files in the root and calling play(fileNumber) only allows indexing based on the CREATED DATE!  Useless for us.
+//- 2. Putting files in /mp3 and calling playMp3Folder(fileNumber) does not allow calling specific file names. Only sequential?
+//--------------------------------------------------------------------------------
 void play_WifiConnected(){
-  myDFPlayer.play(SFX_2_STARTUP_2);
+  myDFPlayer.playFolder(1, SFX_2_STARTUP_2);
 }
 
 void play_WifiDisconnected(){
-  myDFPlayer.play(SFX_501_WIFI_CONNNECTION_LOST);
+  myDFPlayer.playFolder(1, SFX_501_WIFI_CONNNECTION_LOST);
 }
 
 void play_IoT_HubConnectionFailure(){
-  myDFPlayer.play(SFX_600_UNABLE_TO_REGISTER_IOT_SERVER);
+  myDFPlayer.playFolder(1, SFX_600_UNABLE_TO_REGISTER_IOT_SERVER);
 }
 
 //------------------------------------
 void play_SysMonitor_Alert(){
-  myDFPlayer.play(SFX_400_PRODUCTION_SYSTEM_ALERT);
+  myDFPlayer.playFolder(1, SFX_400_PRODUCTION_SYSTEM_ALERT);
 }
 
 void play_SysMonitor_Warning(){
-  myDFPlayer.play(SFX_401_PRODUCTION_WARNING);
+  myDFPlayer.playFolder(1, SFX_401_PRODUCTION_WARNING);
 }
 
 void play_SysMonitor_Resolved(){
-  myDFPlayer.play(SFX_402_PRODUCTION_RESOLVED);
+  myDFPlayer.playFolder(1, SFX_402_PRODUCTION_RESOLVED);
   delay(2000);
-  myDFPlayer.play(SFX_301_ONE_PERSON_CHEERING);
+  myDFPlayer.playFolder(1, SFX_301_ONE_PERSON_CHEERING);
 }
 
 //------------------------------------
 void play_Notice_Bell(){
-  myDFPlayer.play(SFX_13_FRONT_DESK_BELL);
+  myDFPlayer.playFolder(1, SFX_13_FRONT_DESK_BELL);
 }
 
 void play_Notice_Bell2(){
-  myDFPlayer.play(SFX_16_GLASS_PING);
+  myDFPlayer.playFolder(1, SFX_16_GLASS_PING);
 }
 
 void play_Notice_MorseCode(){
-  myDFPlayer.play(SFX_11_MORSE_CODE);
+  myDFPlayer.playFolder(1, SFX_11_MORSE_CODE);
 }
 
 //-----------------------------------------
 void play_Weather_Thunder(){
   //randomize thunder or something?
-  myDFPlayer.play(SFX_100_THUNDER);
-  //myDFPlayer.play(SFX_101_THUNDER_STRIKE_2);
-  //myDFPlayer.play(SFX_102_THUNDER_STRIKE_1);
+  myDFPlayer.playFolder(1, SFX_100_THUNDER);
+  //myDFPlayer.playFolder(1, SFX_101_THUNDER_STRIKE_2);
+  //myDFPlayer.playFolder(1, SFX_102_THUNDER_STRIKE_1);
 }
 
 void play_Weather_Advisory(){
-  myDFPlayer.play(SFX_200_CAR_ALARM_CHIRPS);
+  myDFPlayer.playFolder(1, SFX_200_CAR_ALARM_CHIRPS);
 }
 
 void play_Weather_Watch(){
-  myDFPlayer.play(SFX_103_EBS_INTERRUPT);
+  myDFPlayer.playFolder(1, SFX_103_EBS_INTERRUPT);
 }
 
 void play_Weather_Warning(){
-  myDFPlayer.play(SFX_104_EAS_TONE);
+  myDFPlayer.playFolder(1, SFX_104_EAS_TONE);
 }
 
 void play_Weather_Tornado_Warning(){
-  myDFPlayer.play(SFX_105_ATTENTION_TORNADO_WARNING);
+  myDFPlayer.playFolder(1, SFX_105_ATTENTION_TORNADO_WARNING);
 }
 
 void play_Weather_Tornado_CurrentCondition(){
-  myDFPlayer.play(SFX_106_TORNADO_SIREN);
+  myDFPlayer.playFolder(1, SFX_106_TORNADO_SIREN);
 }
 
 void play_Weather_Fog(){
-  myDFPlayer.play(SFX_202_FOG_HORN_BARGE);
+  myDFPlayer.playFolder(1, SFX_202_FOG_HORN_BARGE);
 }
 //-----------------------------------------
 
@@ -242,7 +251,7 @@ void printDetail(uint8_t type, int value){
 //  delay(1000);
 //  myDFPlayer.previous();  //Play previous mp3
 //  delay(1000);
-//  myDFPlayer.play(1);  //Play the first mp3
+//  myDFPlayer.playFolder(1, 1);  //Play the first mp3
 //  delay(1000);
 //  myDFPlayer.loop(1);  //Loop the first mp3
 //  delay(1000);

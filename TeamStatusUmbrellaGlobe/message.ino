@@ -1,8 +1,5 @@
 #include <Adafruit_Sensor.h>
 #include <ArduinoJson.h>
-//#include <DHT.h>
-//#include <ArduinoJson\compatibility.hpp>
-
 
 bool readMessage(int messageId, char* payload)
 {
@@ -29,6 +26,7 @@ void parseTwinMessage(char* message)
 {
     //const size_t capacity = 9216; //(9K)
 
+    double newTempF = -200;
     Serial.println("parseTwinMessage() called");
     blinkLED();
 
@@ -64,16 +62,16 @@ void parseTwinMessage(char* message)
     {
         Serial.println("================");
         Serial.println("Parsing tempF from Desired:");
-        tempF = root["desired"]["tempF"];
-        Serial.println(tempF);
+        newTempF = root["desired"]["tempF"];
+        Serial.println(newTempF);
         Serial.println("================");
     }
     else if (root.containsKey("tempF"))
     {
         Serial.println("================");
         Serial.println("Parsing tempF from ROOT:");
-        tempF = root["tempF"];
-        Serial.println(tempF);
+        newTempF = root["tempF"];
+        Serial.println(newTempF);
         Serial.println("================");
     }
     else{
@@ -81,4 +79,10 @@ void parseTwinMessage(char* message)
         Serial.println("Could not find tempF.  Sad.");
         Serial.println("================");
     }
+
+    if(newTempF > -200 && newTempF != tempF){
+      tempF = newTempF;
+      updateWeatherPending = true;
+    }
+    
 }

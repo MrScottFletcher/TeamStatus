@@ -5,11 +5,9 @@
     Created:	4/4/2020 12:08:24 PM
     Author:     DESKTOP-62IO2EV\scott
 */
+//#include <Adafruit_NeoPixel.h>
 
 
-#include <Adafruit_NeoPixel.h>
-
-#include <FastLED.h>
 #include <Encoder.h>
 //=======================================================================
 #include <SPI.h>
@@ -28,9 +26,20 @@
 #include "audioplayer.h"
 #include "weather.h"
 #include "clouds.h"
+#include "display.h"
 
 static bool messagePending = false;
 static bool messageSending = true;
+
+//------------------------------------------------------
+//component signalling
+
+static bool updateWeatherPending;
+static bool updateTeamStatusPending;
+
+static long updateDisplayLastMillis;
+static long clearDisplayAfterMillis = 20000;
+//------------------------------------------------------
 
 static char* connectionString;
 static char* ssid;
@@ -41,30 +50,41 @@ static IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle;
 
 void setup()
 {
-    pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, LOW);
+    pinMode(ONBOARD_LED_PIN, OUTPUT);
+    digitalWrite(ONBOARD_LED_PIN, LOW);
     delay(1000);
      
     initSerial();
     delay(1000);
     
-    setupAudio(SFX_2_STARTUP_2);
+    setupAudio(SFX_4_COMPANY_LOGO_SOUND);
     delay(1000);
+    
+    initDisplay();
+
+    displayText("Initializing button");
+    initWakeButton();
+    
 
   //----------------------------------------------------------
   //Do these one by one until fail
-    initNeoPixels();
-        
+    displayText("Initializing LEDs...");
+    initFastLED();
+
+    displayText("Reading credentials..");
     readCredentials();
     delay(1000);
     
+    displayText("Starting\nWiFi..");
     initWifi();
-    fadeIn(100,100,100,5);
-    delay(5000);
-    fadeOut(0,100,0,5);
-    
+
+    //turn on LED strip
+    DoLEDLoopUpdate(20);
+
+    displayText("Getting\ntime...");
     initTime();
 
+    displayText("Connecting\nto cloud...");
     iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(connectionString, MQTT_Protocol);
     if (iotHubClientHandle == NULL)
     {
@@ -78,9 +98,11 @@ void setup()
     IoTHubClient_LL_SetDeviceMethodCallback(iotHubClientHandle, deviceMethodCallback, NULL);
     IoTHubClient_LL_SetDeviceTwinCallback(iotHubClientHandle, twinCallback, NULL);
 
+    displayText("Contacting\nmothership...");
     char messagePayload[MESSAGE_MAX_LEN];
     sendMessage(iotHubClientHandle, messagePayload);
-
+    
+    clearDisplay();
 }
 
 static int messageCount = 1;
@@ -93,49 +115,56 @@ void loop()
         //bool temperatureAlert = readMessage(messageCount, messagePayload);
         //sendMessage(iotHubClientHandle, messagePayload, temperatureAlert);
         //messageCount++;
-        //delay(interval);
+        //delay(MIN_IOT_MESSAGE_INTERVAL);
+    }
+    
+    if(updateWeatherPending){
+      showCurrentTemp();
+      updateDisplayLastMillis = millis();
+      updateWeatherPending = false;
     }
 
-//    if (lights)
-//    {
-//        Serial.println("Lights: True");
-//        if (flash)
-//        {
-//            Serial.println("Lights: True and Flash");
-//            fadeIn(red, green, blue, fadeSpeed);
-//            delay(fadePause);
-//            fadeOut(red, green, blue, fadeSpeed);
-//        }
-//        else
-//        {
-//            Serial.println("Lights: True no flash");
-//            setLights(red, green, blue);
-//        }
-//    }
-//    else
-//    {
-//        setLights(0, 0, 0);
-//        Serial.println("Lights: False");
-//    }
+    if(updateDisplayLastMillis > 0 && updateDisplayLastMillis < millis() - clearDisplayAfterMillis)
+    {  
+      updateDisplayLastMillis = 0;    
+      Serial.println("Clearing display");
+      clearDisplay();
+    }
 
-    //re-enable this
+    DoLEDLoopUpdate(LED_LOOP_DELAY_MS);
+    
     IoTHubClient_LL_DoWork(iotHubClientHandle);
     
-    delay(interval);
+    //delay(loop_delay_ms);
 }
-
-
-
-
 
 
 void blinkLED()
 {
-    digitalWrite(LED_PIN, HIGH);
+    digitalWrite(ONBOARD_LED_PIN, HIGH);
     delay(500);
-    digitalWrite(LED_PIN, LOW);
+    digitalWrite(ONBOARD_LED_PIN, LOW);
 }
 
+static long wakeButtonLastPressed;
+void wakeButtonPressed()           
+{                    
+  if(wakeButtonLastPressed < millis() - 100)
+  {
+   //ISR function excutes when push button at WAKE_BUTTON_PIN is pressed
+   Serial.println("Wake button pressed");
+   updateWeatherPending = true;
+   wakeButtonLastPressed = millis();
+  }
+}
+
+void initWakeButton()
+{
+  pinMode(WAKE_BUTTON_PIN, INPUT_PULLUP);
+
+  //2020-04-20 - Why the hell is this firing the wake button all the time?
+  attachInterrupt(digitalPinToInterrupt(WAKE_BUTTON_PIN),wakeButtonPressed,FALLING);  //  function for creating external interrupts at pin2 on Rising (LOW to HIGH)
+}
 
 
 void initWifi()
@@ -177,7 +206,7 @@ void initTime()
         else
         {
             Serial.printf("Fetched NTP epoch time is: %lu.\r\n", epochTime);
-            break;
+            break;display.println(F("Hello, world!"));
         }
     }
 }
