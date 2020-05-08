@@ -1,7 +1,7 @@
 // Physical device information for board and sensor
 //Don't need these...
 
-#define DEVICE_ID "SDF001TEST"
+#define DEVICE_ID "SDF002TEST"
 
 // Pin layout configuration
 #define ONBOARD_LED_PIN 2

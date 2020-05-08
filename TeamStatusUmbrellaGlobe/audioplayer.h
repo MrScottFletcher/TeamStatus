@@ -29,6 +29,10 @@
 #define SFX_501_WIFI_CONNNECTION_LOST  501
 #define SFX_600_UNABLE_TO_REGISTER_IOT_SERVER  600
 
+//Notes: The files on the SD card must be in a folder named "01"
+//Important: The folder on the SD card must be "01" wit the leading zero!!
+//The files on the card in that folder must be "001.MP3" - "002.MP3" -- ...etc
+
 #define DFPLAYER_RX_PIN 26 // D5 //14
 #define DFPLAYER_TX_PIN 27 //Cannot use 12 on ESP32 or it will boot over and over!!!// D6 //12
 
@@ -40,7 +44,7 @@ DFRobotDFPlayerMini myDFPlayer;
 void printDetail(uint8_t type, int value);
 
 
-void setupAudio(int playConfirmSound)
+void setupAudio(int confirmSoundToPlay)
 {
   mySoftwareSerial.begin(9600);
   Serial.println();
@@ -64,19 +68,22 @@ void setupAudio(int playConfirmSound)
   Serial.println(F("DFPlayer Mini online."));
   
   myDFPlayer.setTimeOut(500); //Set serial communictaion time out 500ms
-  
+  delay(100);
   //----Set volume----
   myDFPlayer.volume(15);  //Set volume value (0~30).
-  myDFPlayer.volumeUp(); //Volume Up
-  myDFPlayer.volumeDown(); //Volume Down
+  delay(100);
+//  myDFPlayer.volumeUp(); //Volume Up
+//  myDFPlayer.volumeDown(); //Volume Down
   
   //----Set different EQ----
   myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
-
-  if(playConfirmSound > 0)
+  delay(100);
+  
+  if(confirmSoundToPlay > 0)
   {
-    myDFPlayer.playFolder(1, playConfirmSound);  
-    //myDFPlayer.play(playConfirmSound);
+    Serial.println(F("Playing confirm sound..."));
+    myDFPlayer.playFolder(1, confirmSoundToPlay);  
+    delay(100);
   }
 }
 
