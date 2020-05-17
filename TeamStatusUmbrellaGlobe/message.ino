@@ -10,7 +10,7 @@ bool readMessage(int messageId, char* payload)
     //float humidity = readHumidity();
     StaticJsonBuffer<MESSAGE_MAX_LEN> jsonBuffer;
     JsonObject& root = jsonBuffer.createObject();
-    root["DeviceId"] = DEVICE_ID;
+    //root["DeviceId"] = "";
     //root["messageId"] = messageId;
     
     //Note: test any sense values for NaN, and set to null if necessary
@@ -21,6 +21,13 @@ bool readMessage(int messageId, char* payload)
     //return temperatureAlert;
     return false;
 }
+
+//void parseWeather(JsonObject *node){
+//     //{"desired":{"ZipCode":"61614","tempF":61.2,"dayPart":0,"wxAlert":0,"wxSevere":false,"sky":4,"wx":0,"wxThndr":false...
+//    //but on subsequent updates, it will only send the patched values, and will place them at the root
+//    //{"tempF":61.2,"dayPart":0,"wxAlert":0,"wxSevere":false,"sky":4,"wx":0,"wxThndr":false...
+//    return;
+//}
 
 void parseTwinMessage(char* message)
 {
@@ -44,19 +51,6 @@ void parseTwinMessage(char* message)
     //{"tempF":61.2,"dayPart":0,"wxAlert":0,"wxSevere":false,"sky":4,"wx":0,"wxThndr":false...
 
     //Consider checking for 'desired', and passing that nested JsonObject at to the parser method
-//    Serial.println("================");
-//    Serial.println("Parsing tempF:");
-//
-//    tempF = root["desired"]["tempF"];
-//    if(tempF == 0)
-//    {
-//        tempF = root["tempF"];
-//    }
-//
-//    Serial.println("SUCCESS!  Yay");
-//    Serial.println(tempF);
-//    Serial.println("Printed TempF");
-//    Serial.println("================");
 
     if (root["desired"]["tempF"].success())
     {
@@ -65,6 +59,7 @@ void parseTwinMessage(char* message)
         newTempF = root["desired"]["tempF"];
         Serial.println(newTempF);
         Serial.println("================");
+        //parseWeather(root["desired"]);
     }
     else if (root.containsKey("tempF"))
     {
@@ -73,6 +68,7 @@ void parseTwinMessage(char* message)
         newTempF = root["tempF"];
         Serial.println(newTempF);
         Serial.println("================");
+        //parseWeather(root);
     }
     else{
         Serial.println("================");
@@ -84,5 +80,4 @@ void parseTwinMessage(char* message)
       tempF = newTempF;
       updateWeatherPending = true;
     }
-    
 }
