@@ -35,6 +35,7 @@ static bool messageSending = true;
 //component signalling
 
 static bool updateWeatherPending;
+static bool noveltySequencePending;
 static bool updateTeamStatusPending;
 
 static long updateDisplayLastMillis;
@@ -45,8 +46,11 @@ static char* connectionString;
 static char* ssid;
 static char* pass;
 
-
 static IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle;
+
+static WeatherState previousWx;
+static WeatherState currentWx;
+static WeatherState updateWx;
 
 void setup()
 {
@@ -117,9 +121,11 @@ void loop()
         //messageCount++;
         //delay(MIN_IOT_MESSAGE_INTERVAL);
     }
-    
-    if(updateWeatherPending){
-      showCurrentTemp();
+    if(noveltySequencePending){
+      //do the thing
+    }
+    else if(updateWeatherPending){
+      showCurrentWx(currentWx);
       updateDisplayLastMillis = millis();
       updateWeatherPending = false;
     }
@@ -146,16 +152,33 @@ void blinkLED()
     digitalWrite(ONBOARD_LED_PIN, LOW);
 }
 
+static long wakeButtonRapidCount;
 static long wakeButtonLastPressed;
 void wakeButtonPressed()           
-{                    
-  if(wakeButtonLastPressed < millis() - 100)
+{           
+  if(wakeButtonLastPressed < millis() - 500)
   {
-   //ISR function excutes when push button at WAKE_BUTTON_PIN is pressed
-   Serial.println("Wake button pressed");
-   updateWeatherPending = true;
-   wakeButtonLastPressed = millis();
+     wakeButtonRapidCount = wakeButtonRapidCount + 1;
   }
+  else{
+    //reset the rapid count
+    wakeButtonRapidCount = 0;
+  }
+  if(wakeButtonRapidCount > 6)
+  {
+    //do a novelty
+    Serial.println("Novelty triggered");
+    noveltySequencePending = true;
+  }
+  else{
+    if(wakeButtonLastPressed < millis() - 100)
+    {
+     //ISR function excutes when push button at WAKE_BUTTON_PIN is pressed
+     Serial.println("Wake button pressed");
+     updateWeatherPending = true;
+    }
+  }
+  wakeButtonLastPressed = millis();
 }
 
 void initWakeButton()

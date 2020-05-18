@@ -12,6 +12,8 @@
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+void showCurrentTemp(WeatherState state);
+
 #define NUMFLAKES     5 // Number of snowflakes in the animation example
 
 #define LOGO_HEIGHT   16
@@ -117,8 +119,8 @@ void initDisplay(){
 }
 
 
-void showCurrentTemp(){
-  String tempString = String(tempF, 0);
+void showCurrentWx(WeatherState state){
+  String tempString = String(state.tempF(), 0);
   display.clearDisplay();
   display.setTextSize(4);             // Normal 1:1 pixel scale
   display.setTextColor(SSD1306_WHITE);        // Draw white text

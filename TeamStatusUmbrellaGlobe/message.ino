@@ -52,6 +52,17 @@ void parseTwinMessage(char* message)
 
     //Consider checking for 'desired', and passing that nested JsonObject at to the parser method
 
+//      "ZipCode": "61614",
+//      "tempF": 66.72,
+//      "dayPart": 2,
+//      "sky": 4,
+//      "wx": 5,
+//      "wxAlert": 0,
+//      "wxSevere": false,
+//      "wxWow": 6,
+//      "wxThndr": false,
+//      "wxTrndo": false,
+
     if (root["desired"]["tempF"].success())
     {
         Serial.println("================");
@@ -60,6 +71,16 @@ void parseTwinMessage(char* message)
         Serial.println(newTempF);
         Serial.println("================");
         //parseWeather(root["desired"]);
+        updateWx.zipCode_set(root["desired"]["ZipCode"]);
+        updateWx.tempF_set(root["desired"]["tempF"]);
+        updateWx.dayPartCode_set(root["desired"]["dayPart"]);
+        updateWx.skyCode_set(root["desired"]["sky"]);
+        updateWx.wxCode_set(root["desired"]["wx"]);
+        updateWx.wxAlert_set(root["desired"]["wxAlert"]);
+        updateWx.bSevere_set(root["desired"]["wxSevere"]);
+        updateWx.wxEnergy_set(root["desired"]["wxWow"]);
+        updateWx.bThunder_set(root["desired"]["wxThndr"]);
+        updateWx.bTornado_set(root["desired"]["wxTrndo"]);
     }
     else if (root.containsKey("tempF"))
     {
@@ -68,7 +89,16 @@ void parseTwinMessage(char* message)
         newTempF = root["tempF"];
         Serial.println(newTempF);
         Serial.println("================");
-        //parseWeather(root);
+        updateWx.zipCode_set(root["ZipCode"]);
+        updateWx.tempF_set(root["tempF"]);
+        updateWx.dayPartCode_set(root["dayPart"]);
+        updateWx.skyCode_set(root["sky"]);
+        updateWx.wxCode_set(root["wx"]);
+        updateWx.wxAlert_set(root["wxAlert"]);
+        updateWx.bSevere_set(root["wxSevere"]);
+        updateWx.wxEnergy_set(root["wxWow"]);
+        updateWx.bThunder_set(root["wxThndr"]);
+        updateWx.bTornado_set(root["wxTrndo"]);
     }
     else{
         Serial.println("================");
@@ -78,6 +108,11 @@ void parseTwinMessage(char* message)
 
     if(newTempF > -200 && newTempF != tempF){
       tempF = newTempF;
+      currentWx = updateWx;
+      updateWeatherPending = true;
+    }
+    if(currentWx.IsDifferent(updateWx)){
+      currentWx = updateWx;
       updateWeatherPending = true;
     }
 }
