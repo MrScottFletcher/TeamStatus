@@ -123,9 +123,11 @@ void loop()
     }
     if(noveltySequencePending){
       //do the thing
+      noveltySequencePending = false;
     }
     else if(updateWeatherPending){
-      showCurrentWx(currentWx);
+      displayCurrentWx(currentWx);
+      //currentWx.setLEDFunction();
       updateDisplayLastMillis = millis();
       updateWeatherPending = false;
     }
@@ -137,6 +139,9 @@ void loop()
       clearDisplay();
     }
 
+    //Call the wxState's method pointer
+    //It will take care of the energy and speed
+    //currentWx.DoLEDLoopUpdate(LED_LOOP_DELAY_MS);
     DoLEDLoopUpdate(LED_LOOP_DELAY_MS);
     
     IoTHubClient_LL_DoWork(iotHubClientHandle);
@@ -156,7 +161,7 @@ static long wakeButtonRapidCount;
 static long wakeButtonLastPressed;
 void wakeButtonPressed()           
 {           
-  if(wakeButtonLastPressed < millis() - 500)
+  if(wakeButtonLastPressed > millis() - 500)
   {
      wakeButtonRapidCount = wakeButtonRapidCount + 1;
   }
