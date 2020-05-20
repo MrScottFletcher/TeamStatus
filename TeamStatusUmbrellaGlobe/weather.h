@@ -27,7 +27,7 @@ class WeatherState {
 //      "wxThndr": false,
 //      "wxTrndo": false,
     
-    typedef void (*voidFuncPtr)(void);// Create a type to point to a funciton.
+    //typedef void (*voidFuncPtr)(void);// Create a type to point to a funciton.
   public:
     long startTicks();
     time_t startTime();
@@ -43,6 +43,7 @@ class WeatherState {
     int wxCode();
     bool bThunder();
     bool bTornado();
+    int ledEffectIndex();
 
     void zipCode_set(String p);
     void startTicks_set(long p);
@@ -56,12 +57,14 @@ class WeatherState {
     void wxCode_set(int p);
     void bThunder_set(bool p);
     void bTornado_set(bool p);
-
+    
+    void ledEffectIndex_set(int p);
+    
     bool IsDifferent(WeatherState other);
 
     //int (*ledFunction)();
-    int getLEDFunction();
-    void setLEDFunction(voidFuncPtr);
+//    int getLEDFunction();
+//    void setLEDFunction(voidFuncPtr);
   private:
     long _startTicks;
     time_t _startTime;
@@ -77,8 +80,11 @@ class WeatherState {
     int _wxCode;
     bool _bThunder;
     bool _bTornado;
+
+    int _ledEffectIndex;
+    
     //int (*_ledFunction)();
-    static voidFuncPtr _LEDFuncitonPointer; // Create an instance of the empty function pointer
+    //static voidFuncPtr _LEDFuncitonPointer; // Create an instance of the empty function pointer
 };
 
 
@@ -199,6 +205,13 @@ bool WeatherState::bTornado(){
 }
 void WeatherState::bTornado_set(bool p){
   this->_bTornado = p;
+}
+//--------------------
+int WeatherState::ledEffectIndex(){
+  return _ledEffectIndex;
+}
+void WeatherState::ledEffectIndex_set(int p){
+  this->_ledEffectIndex = p;
 }
 //--------------------
 

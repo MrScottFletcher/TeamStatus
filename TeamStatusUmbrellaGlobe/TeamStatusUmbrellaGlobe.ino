@@ -40,6 +40,9 @@ static bool updateTeamStatusPending;
 
 static long updateDisplayLastMillis;
 static long clearDisplayAfterMillis = 20000;
+
+static bool inNoveltyMode = false;
+static long noveltyExpiresAtMillis;
 //------------------------------------------------------
 
 static char* connectionString;
@@ -110,6 +113,9 @@ void setup()
 }
 
 static int messageCount = 1;
+
+
+
 void loop()
 {
     if (!messagePending && messageSending)
@@ -121,17 +127,34 @@ void loop()
         //messageCount++;
         //delay(MIN_IOT_MESSAGE_INTERVAL);
     }
+    //====================================
     if(noveltySequencePending){
-      //do the thing
+      //do the novelty thing!
+      //set the length of the effect
+      noveltyExpiresAtMillis = millis() + 18000;
+      //Set the novelty LED sequence
+      SetCurrentEffect(0);
+      //Play the novelty sound
+      play_Novelty0();
+      Serial.println("play_Novelty0");
       noveltySequencePending = false;
     }
     else if(updateWeatherPending){
       displayCurrentWx(currentWx);
       //currentWx.setLEDFunction();
+      SetCurrentEffect(currentWx.ledEffectIndex());
       updateDisplayLastMillis = millis();
       updateWeatherPending = false;
     }
-
+    //====================================
+    if(inNoveltyMode){
+      if(millis() > noveltyExpiresAtMillis){
+        //set the LED sequence back to weather.
+        //For now, we'll just set back to the bland.
+        SetCurrentEffect(42);
+        inNoveltyMode = false;
+      }
+    }
     if(updateDisplayLastMillis > 0 && updateDisplayLastMillis < millis() - clearDisplayAfterMillis)
     {  
       updateDisplayLastMillis = 0;    

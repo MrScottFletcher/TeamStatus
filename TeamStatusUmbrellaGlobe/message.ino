@@ -81,6 +81,10 @@ void parseTwinMessage(char* message)
         updateWx.wxEnergy_set(root["desired"]["wxWow"]);
         updateWx.bThunder_set(root["desired"]["wxThndr"]);
         updateWx.bTornado_set(root["desired"]["wxTrndo"]);
+
+        //do a method to set the LedEffectIndex.  Meanwhile, always use peaches
+        updateWx.ledEffectIndex_set(42);
+        
     }
     else if (root.containsKey("tempF"))
     {
@@ -99,6 +103,9 @@ void parseTwinMessage(char* message)
         updateWx.wxEnergy_set(root["wxWow"]);
         updateWx.bThunder_set(root["wxThndr"]);
         updateWx.bTornado_set(root["wxTrndo"]);
+        
+        //do a method to set the LedEffectIndex.  Meanwhile, always use peaches
+        updateWx.ledEffectIndex_set(42);
     }
     else{
         Serial.println("================");
