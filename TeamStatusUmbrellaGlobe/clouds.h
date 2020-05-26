@@ -1,4 +1,3 @@
-
 #include <FastLED.h>
 
 #define BRIGHTNESS  64
@@ -16,10 +15,6 @@ extern CRGBPalette16 myRedWhiteBluePalette;
 extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 
 bool glitterMode = false;
-
-
-
-
 
 void FillLEDsFromPaletteColors( uint8_t colorIndex)
 {
@@ -228,6 +223,7 @@ void addGlitter( fract8 chanceOfGlitter) {
 
 void SetCurrentEffect(uint8_t index){
   //using a switch instead of an array to do more modifcations
+  Serial.printf("Set LED Cloud CurrentEffect index: %i.\r\n", index);
   glitterMode = false;
   switch(index){
         case 0:
@@ -331,28 +327,45 @@ void SetCurrentEffect(uint8_t index){
   }
 }
 
+int ledEffectDelayMs = 0;
+
+void SetCurrentLedDelayMs(uint8_t delayMs){
+  //using a switch instead of an array to do more modifcations
+  Serial.printf("Set LED Delay: %i.\r\n", delayMs);
+  ledEffectDelayMs = delayMs;
+}
+
+void SetCurrentBrightness(uint8_t brightness){
+  //using a switch instead of an array to do more modifcations
+  Serial.printf("Set LED Brightness: %i.\r\n", brightness);
+  FastLED.setBrightness(brightness);
+}
+
 void initFastLED(){
     FastLED.addLeds<LED_TYPE, LED_STRIP_DATA_PIN, COLOR_ORDER>(leds, LED_STRIP_NUMPIXELS).setCorrection( TypicalLEDStrip );
     FastLED.setBrightness(  BRIGHTNESS );
     currentEffectIndex = 42;
+    ledEffectDelayMs = 100;
     SetCurrentEffect(currentEffectIndex);
 }
 
-void DoLEDLoopUpdate(int delayMs){
+
+
+void DoLEDLoopUpdate(){
     static uint8_t startIndex = 0;
     startIndex = startIndex + 1; /* motion speed */
 
-    FillLEDsFromPaletteColors( startIndex);
+    FillLEDsFromPaletteColors(startIndex);
 
     if(glitterMode){
       addGlitter(20);
       FastLED.show();
       FastLED.delay(20);
-      FillLEDsFromPaletteColors( startIndex);
+      FillLEDsFromPaletteColors(startIndex);
     }
     
     FastLED.show();
-    FastLED.delay(delayMs);
+    FastLED.delay(ledEffectDelayMs);
 }
 
 

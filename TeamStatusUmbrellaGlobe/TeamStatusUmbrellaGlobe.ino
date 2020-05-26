@@ -1,4 +1,4 @@
-// Visual Micro is in vMicro>General>Tutorial Mode
+ // Visual Micro is in vMicro>General>Tutorial Mode
 // 
 /*
     Name:       TeamStatusUmbrellaGlobe.ino
@@ -85,8 +85,12 @@ void setup()
     displayText("Starting\nWiFi..");
     initWifi();
 
+    SetCurrentEffect(26);
+    SetCurrentLedDelayMs(100);
+    SetCurrentBrightness(200);
+      
     //turn on LED strip
-    DoLEDLoopUpdate(20);
+    DoLEDLoopUpdate();
 
     displayText("Getting\ntime...");
     initTime();
@@ -133,7 +137,9 @@ void loop()
       //set the length of the effect
       noveltyExpiresAtMillis = millis() + 18000;
       //Set the novelty LED sequence
-      SetCurrentEffect(0);
+      SetCurrentEffect(1);
+      SetCurrentLedDelayMs(100);
+      SetCurrentBrightness(254);
       //Play the novelty sound
       play_Novelty0();
       Serial.println("play_Novelty0");
@@ -141,8 +147,15 @@ void loop()
     }
     else if(updateWeatherPending){
       displayCurrentWx(currentWx);
-      //currentWx.setLEDFunction();
+      //could check the currentWx.bThunder || bTornado changed to see if we
+      //really want to play the sound effect again.  Maybe just the temp changed?
+
+      play_FileIndex(currentWx.sfxIndex());
+      
       SetCurrentEffect(currentWx.ledEffectIndex());
+      SetCurrentLedDelayMs(currentWx.ledDelayMs());
+      SetCurrentBrightness(currentWx.ledBrightness());
+      
       updateDisplayLastMillis = millis();
       updateWeatherPending = false;
     }
@@ -151,7 +164,9 @@ void loop()
       if(millis() > noveltyExpiresAtMillis){
         //set the LED sequence back to weather.
         //For now, we'll just set back to the bland.
-        SetCurrentEffect(42);
+        SetCurrentEffect(currentWx.ledEffectIndex());
+        SetCurrentLedDelayMs(currentWx.ledDelayMs());
+        SetCurrentBrightness(currentWx.ledBrightness());
         inNoveltyMode = false;
       }
     }
@@ -164,8 +179,7 @@ void loop()
 
     //Call the wxState's method pointer
     //It will take care of the energy and speed
-    //currentWx.DoLEDLoopUpdate(LED_LOOP_DELAY_MS);
-    DoLEDLoopUpdate(LED_LOOP_DELAY_MS);
+    DoLEDLoopUpdate();
     
     IoTHubClient_LL_DoWork(iotHubClientHandle);
     
@@ -184,26 +198,25 @@ static long wakeButtonRapidCount;
 static long wakeButtonLastPressed;
 void wakeButtonPressed()           
 {           
-  if(wakeButtonLastPressed > millis() - 500)
+  if(wakeButtonLastPressed < millis() - 100)
   {
-     wakeButtonRapidCount = wakeButtonRapidCount + 1;
-  }
-  else{
-    //reset the rapid count
-    wakeButtonRapidCount = 0;
-  }
-  if(wakeButtonRapidCount > 6)
-  {
-    //do a novelty
-    Serial.println("Novelty triggered");
-    noveltySequencePending = true;
-  }
-  else{
-    if(wakeButtonLastPressed < millis() - 100)
+    wakeButtonRapidCount ++;
+    if(wakeButtonLastPressed < millis() - 2000)
     {
-     //ISR function excutes when push button at WAKE_BUTTON_PIN is pressed
-     Serial.println("Wake button pressed");
-     updateWeatherPending = true;
+      //reset the rapid count
+      wakeButtonRapidCount = 0;
+    }
+    
+    if(wakeButtonRapidCount > 4)
+    {
+      //do a novelty
+      Serial.println("Novelty triggered");
+      noveltySequencePending = true;
+    }
+    else{
+       //ISR function excutes when push button at WAKE_BUTTON_PIN is pressed
+       Serial.println("Wake button pressed");
+       updateWeatherPending = true;
     }
   }
   wakeButtonLastPressed = millis();

@@ -108,6 +108,13 @@ void setupAudio(int confirmSoundToPlay)
 //- 1. putting files in the root and calling play(fileNumber) only allows indexing based on the CREATED DATE!  Useless for us.
 //- 2. Putting files in /mp3 and calling playMp3Folder(fileNumber) does not allow calling specific file names. Only sequential?
 //--------------------------------------------------------------------------------
+
+void play_FileIndex(int soundToPlay){
+  myDFPlayer.playFolder(1, soundToPlay);
+  delay(100);
+}
+
+
 void play_WifiConnected(){
   myDFPlayer.playFolder(1, SFX_2_STARTUP_2);
 }
