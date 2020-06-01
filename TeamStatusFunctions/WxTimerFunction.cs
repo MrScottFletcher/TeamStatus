@@ -83,7 +83,8 @@ namespace TeamStatusFunctions
                         {
                             //HEADS-UP!  Since properties.reported.ZipCode is dynamic, well get a Bad Request error if there 
                             //were no devices in the list.
-                            log.LogInformation($"ERROR deviceQuery.GetNextAsTwinAsync with query '{queryByZip}'.  {DateTime.Now} - {exQry.ToString()}");
+                            //Not wanting to cost any money!  Not even $1 a month.  Disabling all logging.
+                            //log.LogInformation($"ERROR deviceQuery.GetNextAsTwinAsync with query '{queryByZip}'.  {DateTime.Now} - {exQry.ToString()}");
                             throw;
                         }
                         #endregion
@@ -147,7 +148,8 @@ namespace TeamStatusFunctions
             }
             catch (Exception exAny)
             {
-                log.LogInformation($"Error at stage '{stage}' with {deviceCount} devices: {DateTime.Now} : {exAny.ToString()} ");
+                //Not wanting to cost any money!  Not even $1 a month.  Disabling all logging.
+                //log.LogInformation($"Error at stage '{stage}' with {deviceCount} devices: {DateTime.Now} : {exAny.ToString()} ");
                 throw;
             }
 
